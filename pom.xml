@@ -9,9 +9,6 @@
     <modules>
         <module>Core</module>
         <module>Bukkit</module>
-        <module>Folia</module>
-        <module>PaperCore</module>
-        <module>Sponge</module>
         <module>Bungee</module>
         <module>Velocity</module>
         <module>Sponge8</module>
@@ -20,8 +17,8 @@
 
     <properties>
         <tne.relocation>net.tnemc.libs</tne.relocation>
-        <tne.java>17</tne.java>
-        <maven.compiler.target>17</maven.compiler.target>
+        <tne.java>11</tne.java>
+        <maven.compiler.target>11</maven.compiler.target>
         <maven.javadoc.plugin.version>3.0.1</maven.javadoc.plugin.version>
         <maven.source.version>3.2.0</maven.source.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -37,7 +37,6 @@ import net.tnemc.core.command.parameters.suggestion.StatusSuggestion;
 import net.tnemc.core.compatibility.log.DebugLevel;
 import net.tnemc.core.currency.Currency;
 import net.tnemc.core.region.RegionGroup;
-import net.tnemc.menu.sponge8.listeners.Sponge8InventoryClickListener;
 import net.tnemc.sponge.command.AdminCommand;
 import net.tnemc.sponge.command.ModuleCommand;
 import net.tnemc.sponge.command.MoneyCommand;
@@ -46,7 +45,6 @@ import net.tnemc.sponge.command.TransactionCommand;
 import net.tnemc.sponge.impl.SpongeLogProvider;
 import net.tnemc.sponge.impl.SpongeServerProvider;
 import net.tnemc.sponge.impl.eco.SpongeEconomy;
-import net.tnemc.sponge.listeners.player.PlayerCloseInventoryListener;
 import net.tnemc.sponge.listeners.player.PlayerJoinListener;
 import net.tnemc.sponge.listeners.player.PlayerLeaveListener;
 import org.apache.logging.log4j.Logger;
@@ -138,8 +136,6 @@ public class SpongeCore extends TNECore {
     //Register our event listeners
     Sponge.eventManager().registerListeners(container, new PlayerJoinListener(container));
     Sponge.eventManager().registerListeners(container, new PlayerLeaveListener(container));
-    Sponge.eventManager().registerListeners(container, new Sponge8InventoryClickListener(container));
-    Sponge.eventManager().registerListeners(container, new PlayerCloseInventoryListener(container));
   }
 
   @Listener

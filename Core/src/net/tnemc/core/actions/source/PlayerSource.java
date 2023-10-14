@@ -28,7 +28,13 @@ import java.util.UUID;
  * @author creatorfromhell
  * @since 0.1.2.0
  */
-public record PlayerSource(UUID id) implements ActionSource {
+public class PlayerSource implements ActionSource {
+
+  private final UUID id;
+
+  public PlayerSource(UUID id) {
+    this.id = id;
+  }
 
   /**
    * Used to get the name of the source of the action.
@@ -64,5 +70,9 @@ public record PlayerSource(UUID id) implements ActionSource {
   @Override
   public String reason() {
     return "command";
+  }
+
+  public UUID id() {
+    return id;
   }
 }

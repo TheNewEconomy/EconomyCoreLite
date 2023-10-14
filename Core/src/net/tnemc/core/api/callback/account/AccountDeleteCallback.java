@@ -26,7 +26,13 @@ import net.tnemc.core.api.callback.TNECallbacks;
  * @author creatorfromhell
  * @since 0.1.2.0
  */
-public record AccountDeleteCallback(String identifier) implements TNECallback {
+public class AccountDeleteCallback implements TNECallback {
+
+  private final String identifier;
+
+  public AccountDeleteCallback(String identifier) {
+    this.identifier = identifier;
+  }
 
   /**
    * The name of this callback.
@@ -36,5 +42,9 @@ public record AccountDeleteCallback(String identifier) implements TNECallback {
   @Override
   public String name() {
     return TNECallbacks.ACCOUNT_DELETE.id();
+  }
+
+  public String identifier() {
+    return identifier;
   }
 }

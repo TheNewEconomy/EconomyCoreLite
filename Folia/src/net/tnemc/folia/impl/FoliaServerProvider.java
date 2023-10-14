@@ -19,20 +19,14 @@ package net.tnemc.folia.impl;
  */
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import net.tnemc.bukkit.impl.BukkitItemCalculations;
 import net.tnemc.core.compatibility.CmdSource;
 import net.tnemc.core.compatibility.PlayerProvider;
 import net.tnemc.core.compatibility.ProxyProvider;
 import net.tnemc.core.compatibility.ServerConnector;
-import net.tnemc.core.compatibility.helper.CraftingRecipe;
 import net.tnemc.core.compatibility.scheduler.SchedulerProvider;
-import net.tnemc.core.currency.item.ItemDenomination;
 import net.tnemc.core.region.RegionMode;
 import net.tnemc.folia.TNE;
 import net.tnemc.folia.impl.scheduler.FoliaScheduler;
-import net.tnemc.item.AbstractItemStack;
-import net.tnemc.item.bukkit.BukkitCalculationsProvider;
-import net.tnemc.item.bukkit.BukkitItemStack;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -54,8 +48,6 @@ import java.util.UUID;
  * @since 0.1.2.0
  */
 public class FoliaServerProvider implements ServerConnector {
-
-  private final BukkitCalculationsProvider calc = new BukkitCalculationsProvider();
   private final FoliaProxyProvider proxy = new FoliaProxyProvider();
 
   private final FoliaScheduler scheduler;
@@ -233,11 +225,6 @@ public class FoliaServerProvider implements ServerConnector {
   }
 
   @Override
-  public AbstractItemStack<?> stackBuilder() {
-    return new BukkitItemStack();
-  }
-
-  @Override
   public void saveResource(String path, boolean replace) {
     TNE.instance().saveResource(path, replace);
   }
@@ -250,52 +237,5 @@ public class FoliaServerProvider implements ServerConnector {
   @Override
   public FoliaScheduler scheduler() {
     return scheduler;
-  }
-
-  /**
-   * Used to register a crafting recipe to the server.
-   *
-   * @param recipe The crafting recipe to register.
-   *
-   * @see CraftingRecipe
-   */
-  @Override
-  public void registerCrafting(@NotNull CraftingRecipe recipe) {
-    if(recipe.isShaped()) {
-      final ShapedRecipe shaped = new ShapedRecipe(denominationToStack(recipe.getResult()).locale());
-      shaped.shape(recipe.getRows());
-
-      for(Map.Entry<Character, String> ingredient : recipe.getIngredients().entrySet()) {
-        shaped.setIngredient(ingredient.getKey(), Material.valueOf(ingredient.getValue()));
-      }
-      Bukkit.getServer().addRecipe(shaped);
-    } else {
-      final ShapelessRecipe shapeless = new ShapelessRecipe(denominationToStack(recipe.getResult()).locale());
-      for(Map.Entry<Character, String> ingredient : recipe.getIngredients().entrySet()) {
-        shapeless.addIngredient(1, Material.valueOf(ingredient.getValue()));
-      }
-      Bukkit.getServer().addRecipe(shapeless);
-    }
-  }
-
-  @Override
-  public BukkitItemStack denominationToStack(ItemDenomination denomination) {
-    return new BukkitItemStack().of(denomination.getMaterial(), 1)
-        .enchant(denomination.getEnchantments())
-        .lore(denomination.getLore())
-        .flags(denomination.getFlags())
-        .damage(denomination.getDamage())
-        .display(denomination.getName())
-        .modelData(denomination.getCustomModel());
-  }
-
-  @Override
-  public BukkitCalculationsProvider calculations() {
-    return calc;
-  }
-
-  @Override
-  public BukkitItemCalculations itemCalculations() {
-    return new BukkitItemCalculations();
   }
 }

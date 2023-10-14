@@ -45,14 +45,6 @@ import java.math.BigDecimal;
 @Command({"money", "eco", "balo", "balance", "bal", "balanceother"})
 public class MoneyCommand {
 
-  /*@Subcommand({"balmenu", "menu", "mybal"})
-  @Usage("Money.MyBal.Arguments")
-  @Description("Money.MyBal.Description")
-  @CommandPermission("tne.money.mybal")
-  public void onMyBal(BukkitCommandActor sender, @Named("currency") Currency currency) {
-    net.tnemc.core.command.MoneyCommand.onMyBal(new BukkitCMDSource(sender), currency);
-  }*/
-
   @Subcommand({"help", "?"})
   @Usage("Help.Arguments")
   @Description("Help.Description")
@@ -77,28 +69,12 @@ public class MoneyCommand {
     net.tnemc.core.command.MoneyCommand.onConvert(new BukkitCMDSource(sender), amount, currency, from);
   }
 
-  @Subcommand({"deposit"})
-  @Usage("Money.Deposit.Arguments")
-  @Description("Money.Deposit.Description")
-  @CommandPermission("tne.money.deposit")
-  public void onDeposit(BukkitCommandActor sender, @Named("amount") PercentBigDecimal amount, @Default("") @Named("currency") Currency currency, @Default("world-113") @Named("region") String region) {
-    net.tnemc.core.command.MoneyCommand.onDeposit(new BukkitCMDSource(sender), amount, currency, region);
-  }
-
   @Subcommand({"give", "+", "add"})
   @Usage("Money.Give.Arguments")
   @Description("Money.Give.Description")
   @CommandPermission("tne.money.give")
   public void onGive(BukkitCommandActor sender, Account player, @Named("amount") PercentBigDecimal amount, @Default("") @Named("currency") Currency currency, @Default("world-113") @Named("region") String region) {
     net.tnemc.core.command.MoneyCommand.onGive(new BukkitCMDSource(sender), player, amount, region, currency);
-  }
-
-  @Subcommand({"note", "n"})
-  @Usage("Money.Note.Arguments")
-  @Description("Money.Note.Description")
-  @CommandPermission("tne.money.note")
-  public void onNote(BukkitCommandActor sender, @Named("amount") PercentBigDecimal amount, @Default("") @Named("currency") Currency currency) {
-    net.tnemc.core.command.MoneyCommand.onNote(new BukkitCMDSource(sender), amount, currency);
   }
 
   @Subcommand({"other", "check", "balo"})
@@ -156,13 +132,5 @@ public class MoneyCommand {
   @CommandPermission("tne.money.top")
   public void onTop(BukkitCommandActor sender, @Default("1") Integer page, @Default("") @Named("currency") Currency currency, @Default("false") Boolean refresh) {
     net.tnemc.core.command.MoneyCommand.onTop(new BukkitCMDSource(sender), page, currency, refresh);
-  }
-
-  @Subcommand({"withdraw"})
-  @Usage("Money.Withdraw.Arguments")
-  @Description("Money.Withdraw.Description")
-  @CommandPermission("tne.money.withdraw")
-  public void onWithdraw(BukkitCommandActor sender, @Named("amount") PercentBigDecimal amount, @Default("") @Named("currency") Currency currency, @Default("world-113") @Named("region") String region) {
-    net.tnemc.core.command.MoneyCommand.onWithdraw(new BukkitCMDSource(sender), amount, currency, region);
   }
 }

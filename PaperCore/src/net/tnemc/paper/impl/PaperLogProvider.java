@@ -30,7 +30,13 @@ import java.util.logging.Logger;
  * @author creatorfromhell
  * @since 0.1.2.0
  */
-public record PaperLogProvider(Logger logger) implements LogProvider {
+public class PaperLogProvider implements LogProvider {
+
+  private final Logger logger;
+
+  public PaperLogProvider(Logger logger) {
+    this.logger = logger;
+  }
 
   /**
    * Sends an informative message, which doesn't contain an error or debug message.
@@ -100,5 +106,9 @@ public record PaperLogProvider(Logger logger) implements LogProvider {
       }
       logger.warning("====== Please report this to someone ======");
     }
+  }
+
+  public Logger logger() {
+    return logger;
   }
 }

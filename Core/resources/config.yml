@@ -49,12 +49,6 @@ Core:
     #restarts, but will not impact anything significant.
     RandomUUID: false
 
-    #Whether to import exist item currencies into a player's balance when they join for the first time.
-    ImportItems: true
-
-    #Should TNE disable mob drops that are valid item currencies?
-    MobDrop: true
-
     #Should experience gaining be disabled? This will help for servers that use Experience as currency.
     ExperienceGain: false
 
@@ -152,19 +146,6 @@ Core:
         #The tax may also be a percentage. For percent follow number by the % symbol, i.e 10%
         Rate: 0.0
 
-    #Configurations relating to desposit transactions.
-    Deposit:
-
-      #Tax-related configurations.
-      Tax:
-
-        #If this tax is enabled.
-        Enabled: false
-
-        #The tax to apply to a deposit transaction.
-        #The tax may also be a percentage. For percent follow number by the % symbol, i.e 10%
-        Rate: 0.0
-
     #Configurations relating to pay transactions.
     Pay:
 
@@ -181,16 +162,3 @@ Core:
         #The tax to apply to the receiver
         #The tax may also be a percentage. For percent follow number by the % symbol, i.e 10%
         Receiver: 0.0
-
-    #Configurations relating to withdraw transactions.
-    Withdraw:
-
-      #Tax-related configurations.
-      Tax:
-
-        #If this tax is enabled.
-        Enabled: false
-
-        #The tax to apply to a withdrawal transaction.
-        #The tax may also be a percentage. For percent follow number by the % symbol, i.e 10%
-        Rate: 0.0

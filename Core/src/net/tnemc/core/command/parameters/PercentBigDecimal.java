@@ -25,9 +25,25 @@ import java.math.BigDecimal;
  * @author creatorfromhell
  * @since 0.1.2.0
  */
-public record PercentBigDecimal(boolean isPercent, BigDecimal value) {
+public class PercentBigDecimal {
+
+  private final boolean isPercent;
+  private final BigDecimal value;
+
+  public PercentBigDecimal(boolean isPercent, BigDecimal value) {
+    this.isPercent = isPercent;
+    this.value = value;
+  }
 
   public PercentBigDecimal negate() {
     return new PercentBigDecimal(isPercent, value.negate());
+  }
+
+  public boolean isPercent() {
+    return isPercent;
+  }
+
+  public BigDecimal value() {
+    return value;
   }
 }

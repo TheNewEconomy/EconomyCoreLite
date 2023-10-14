@@ -27,7 +27,15 @@ import java.util.Optional;
  * @author creatorfromhell
  * @since 0.1.2.0
  */
-public record Identifier(String plugin, String id) {
+public class Identifier {
+
+  private final String plugin;
+  private final String id;
+
+  public Identifier(String plugin, String id) {
+    this.plugin = plugin;
+    this.id = id;
+  }
 
   public String asID() {
     return plugin + ":" + id;
@@ -61,5 +69,13 @@ public record Identifier(String plugin, String id) {
       return ((Identifier)obj).asID().equalsIgnoreCase(asID());
     }
     return false;
+  }
+
+  public String plugin() {
+    return plugin;
+  }
+
+  public String id() {
+    return id;
   }
 }

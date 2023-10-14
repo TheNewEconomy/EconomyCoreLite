@@ -20,9 +20,7 @@ package net.tnemc.core.handlers.player;
 import net.tnemc.core.TNECore;
 import net.tnemc.core.account.Account;
 import net.tnemc.core.account.PlayerAccount;
-import net.tnemc.core.account.holdings.HoldingsEntry;
 import net.tnemc.core.compatibility.PlayerProvider;
-import net.tnemc.core.currency.Currency;
 import net.tnemc.core.io.storage.StorageManager;
 import net.tnemc.core.utils.HandlerResponse;
 
@@ -47,19 +45,6 @@ public class PlayerLeaveHandler {
 
     final Optional<Account> account = TNECore.eco().account().findAccount(provider.identifier());
     if(account.isPresent() && (account.get() instanceof PlayerAccount)) {
-
-      final String region = TNECore.eco().region().getMode().region(provider);
-      for(Currency currency : TNECore.eco().currency().getCurrencies(region)) {
-
-        if(currency.type().supportsItems()) {
-
-          for(HoldingsEntry entry : account.get().getHoldings(region, currency.getUid())) {
-
-            //account.get().setHoldings(entry, entry.getHandler());
-            account.get().getWallet().setHoldings(entry);
-          }
-        }
-      }
 
       ((PlayerAccount)account.get()).setLastOnline(new Date().getTime());
       account.get().clearAwayReceipts();

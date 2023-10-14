@@ -41,12 +41,6 @@ import java.util.Optional;
  */
 public class AdminCommand extends BaseCommand {
 
-  public static void onMyEco(CmdSource<?> sender) {
-    if(sender.player().isPresent()) {
-      sender.player().get().inventory().openMenu(sender.player().get(), "my_eco");
-    }
-  }
-
   public static void onBackup(CmdSource<?> sender) {
     if(StorageManager.instance().backup()) {
 
@@ -130,17 +124,20 @@ public class AdminCommand extends BaseCommand {
 
   public static void onReload(CmdSource<?> sender, String type) {
     switch(type.toLowerCase()) {
-      case "config" -> {
+      case "config": {
         TNECore.instance().config().load();
         TNECore.eco().currency().load(TNECore.directory());
+        break;
       }
-      case "data" -> {
+      case "data": {
         TNECore.instance().data().load();
+        break;
       }
-      case "message" -> {
+      case "message": {
         TNECore.instance().message().load();
+        break;
       }
-      default -> {
+      default: {
         TNECore.instance().config().load();
         TNECore.eco().currency().load(TNECore.directory());
         TNECore.instance().data().load();

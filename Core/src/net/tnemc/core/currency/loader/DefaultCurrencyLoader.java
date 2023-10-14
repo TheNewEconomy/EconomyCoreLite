@@ -21,16 +21,12 @@ package net.tnemc.core.currency.loader;
 import net.tnemc.core.TNECore;
 import net.tnemc.core.api.callback.currency.CurrencyLoadCallback;
 import net.tnemc.core.api.callback.currency.DenominationLoadCallback;
-import net.tnemc.core.compatibility.helper.CraftingRecipe;
 import net.tnemc.core.compatibility.log.DebugLevel;
 import net.tnemc.core.currency.Currency;
 import net.tnemc.core.currency.CurrencyLoader;
 import net.tnemc.core.currency.CurrencyRegion;
 import net.tnemc.core.currency.CurrencyType;
 import net.tnemc.core.currency.Denomination;
-import net.tnemc.core.currency.Note;
-import net.tnemc.core.currency.item.ItemCurrency;
-import net.tnemc.core.currency.item.ItemDenomination;
 import net.tnemc.core.utils.IOUtil;
 import org.simpleyaml.configuration.file.YamlFile;
 
@@ -143,10 +139,10 @@ public class DefaultCurrencyLoader implements CurrencyLoader {
       type = TNECore.eco().currency().findType("virtual");
     }
 
-    Currency currency = (type.get().supportsItems())? new ItemCurrency() : new Currency();
+    final Currency currency = new Currency();
 
     final BigDecimal maxBalance = ((new BigDecimal(cur.getString("Options.MaxBalance", largestSupported.toPlainString())).compareTo(largestSupported) > 0)? largestSupported : new BigDecimal(cur.getString("MaxBalance", largestSupported.toPlainString())));
-    final BigDecimal minBalance = (type.get().supportsItems())? BigDecimal.ZERO : new BigDecimal(cur.getString("Options.MinBalance", "0.00"));
+    final BigDecimal minBalance = new BigDecimal(cur.getString("Options.MinBalance", "0.00"));
     final BigDecimal balance = new BigDecimal(cur.getString("Options.Balance", "200.00"));
 
     //Added in build 28, needs removed by build 32.
@@ -212,34 +208,6 @@ public class DefaultCurrencyLoader implements CurrencyLoader {
       for(String str : converting) {
         currency.getConversion().put(str, cur.getDouble("Converting." + str, 1.0));
       }
-    }
-
-    //Load our item-back currency configurations.
-    if(currency instanceof ItemCurrency) {
-      ((ItemCurrency)currency).setEnderChest(cur.getBoolean("Item.EnderChest", true));
-    }
-
-    //Load our note configurations.
-    if(cur.getBoolean("Note.Notable", true)) {
-
-      //Note Item configs
-      final String material = cur.getString("Note.Item.Material", "PAPER");
-
-      final BigDecimal minimum = new BigDecimal(cur.getString("Note.Minimum", "0.00"));
-
-      final Note note = new Note(material, minimum, cur.getString("Note.Fee", "0.00"));
-
-      note.setTexture(cur.getString("Note.Item.Texture", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDA0NzE5YjNiOTdkMTk1YTIwNTcxOGI2ZWUyMWY1Yzk1Y2FmYTE2N2U3YWJjYTg4YTIxMDNkNTJiMzdkNzIyIn19fQ=="));
-      note.setCustomModelData(cur.getInt("Note.Item.ModelData", -1));
-
-      if(cur.contains("Note.Item.Enchantments")) {
-        note.setEnchantments(cur.getStringList("Note.Item.Enchantments"));
-      }
-
-      if(cur.contains("Note.Item.Flags")) {
-        note.setFlags(cur.getStringList("Note.Item.Flags"));
-      }
-      currency.setNote(note);
     }
 
     final CurrencyLoadCallback currencyLoad = new CurrencyLoadCallback(currency);
@@ -325,56 +293,11 @@ public class DefaultCurrencyLoader implements CurrencyLoader {
     final String plural = denom.getString("Info.Plural", "Dollars");
 
     final BigDecimal weight = BigDecimal.valueOf(denom.getDouble("Options.Weight", 1));
-    final String material = denom.getString("Options.Material", "PAPER");
 
-    Denomination denomination = (currency instanceof ItemCurrency)?
-        new ItemDenomination(weight, material) : new Denomination(weight);
+    final Denomination denomination = new Denomination(weight);
 
     denomination.setSingle(single);
     denomination.setPlural(plural);
-
-    if(denomination instanceof ItemDenomination) {
-
-      ((ItemDenomination)denomination).setName(denom.getString("Options.Name", null));
-      ((ItemDenomination)denomination).setLore(denom.getStringList("Options.Lore"));
-      ((ItemDenomination)denomination).setCustomModel(denom.getInt("Options.ModelData", -1));
-      ((ItemDenomination)denomination).setTexture(denom.getString("Options.Texture", null));
-
-      if(denom.contains("Options.Enchantments")) {
-        ((ItemDenomination)denomination).setEnchantments(denom.getStringList("Options.Enchantments"));
-      }
-
-      if(denom.contains("Options.Flags")) {
-        ((ItemDenomination)denomination).setFlags(denom.getStringList("Options.Flags"));
-      }
-
-      //Crafting
-      if(denom.getBoolean("Options.Crafting.Enabled", false)) {
-        final boolean shapeless = denom.getBoolean("Options.Crafting.Shapeless", false);
-        final int amount = denom.getInt("Options.Crafting.Amount", 1);
-
-        CraftingRecipe recipe = new CraftingRecipe(!shapeless, amount, (ItemDenomination)denomination);
-
-        for(String materials : denom.getStringList("Options.Crafting.Materials")) {
-
-          String[] split = materials.split(":");
-          if(split.length >= 2) {
-            recipe.getIngredients().put(split[0].charAt(0), split[1]);
-          }
-        }
-
-        int i = 0;
-        for(String row : denom.getStringList("Options.Crafting.Recipe")) {
-          if(i > 2) break;
-
-          recipe.getRows()[i] = row;
-
-          i++;
-        }
-
-        TNECore.server().registerCrafting(recipe);
-      }
-    }
 
     final DenominationLoadCallback denomCallback = new DenominationLoadCallback(currency, denomination);
     if(TNECore.callbacks().call(denomCallback)) {

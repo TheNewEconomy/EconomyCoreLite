@@ -41,15 +41,6 @@ import revxrsal.commands.sponge.annotation.CommandPermission;
 @Description("#{Admin.Main.Description}")
 public class AdminCommand {
 
-  @DefaultFor({"tne", "ecomin", "ecoadmin", "ecomanage", "theneweconomy"})
-  @Subcommand({"ecomenu", "menu", "myeco", "ecomenu"})
-  @Usage("#{Admin.MyEco.Arguments}")
-  @Description("#{Admin.MyEco.Description}")
-  @CommandPermission("tne.money.myeco")
-  public void onMyEco(SpongeCommandActor sender) {
-    net.tnemc.core.command.AdminCommand.onMyEco(new SpongeCMDSource(sender));
-  }
-
   @Subcommand({"backup", "archive"})
   @Usage("#{Admin.Backup.Arguments}")
   @Description("#{Admin.Backup.Description}")

@@ -30,7 +30,13 @@ import net.tnemc.core.transaction.TransactionResult;
  * @author creatorfromhell
  * @since 0.1.2.0
  */
-public record PostTransactionCallback(TransactionResult result) implements TNECallback {
+public class PostTransactionCallback implements TNECallback {
+
+  private final TransactionResult result;
+
+  public PostTransactionCallback(TransactionResult result) {
+    this.result = result;
+  }
 
   /**
    * The name of this callback.
@@ -40,5 +46,9 @@ public record PostTransactionCallback(TransactionResult result) implements TNECa
   @Override
   public String name() {
     return TNECallbacks.TRANSACTION_POST.id();
+  }
+
+  public TransactionResult result() {
+    return result;
   }
 }

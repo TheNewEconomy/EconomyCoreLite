@@ -22,26 +22,17 @@ import net.tnemc.core.compatibility.CmdSource;
 import net.tnemc.core.compatibility.PlayerProvider;
 import net.tnemc.core.compatibility.ProxyProvider;
 import net.tnemc.core.compatibility.ServerConnector;
-import net.tnemc.core.compatibility.helper.CraftingRecipe;
 import net.tnemc.core.compatibility.scheduler.SchedulerProvider;
-import net.tnemc.core.currency.item.ItemDenomination;
 import net.tnemc.core.region.RegionMode;
-import net.tnemc.item.AbstractItemStack;
-import net.tnemc.item.bukkit.BukkitCalculationsProvider;
-import net.tnemc.item.bukkit.BukkitItemStack;
 import net.tnemc.paper.TNE;
 import net.tnemc.paper.impl.scheduler.PaperScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.commands.command.CommandActor;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,8 +43,6 @@ import java.util.UUID;
  * @since 0.1.2.0
  */
 public class PaperServerProvider implements ServerConnector {
-
-  private final BukkitCalculationsProvider calc = new BukkitCalculationsProvider();
   private final PaperProxyProvider proxy = new PaperProxyProvider();
 
   private final PaperScheduler scheduler;
@@ -231,11 +220,6 @@ public class PaperServerProvider implements ServerConnector {
   }
 
   @Override
-  public AbstractItemStack<?> stackBuilder() {
-    return new BukkitItemStack();
-  }
-
-  @Override
   public void saveResource(String path, boolean replace) {
     TNE.instance().saveResource(path, replace);
   }
@@ -248,52 +232,5 @@ public class PaperServerProvider implements ServerConnector {
   @Override
   public PaperScheduler scheduler() {
     return scheduler;
-  }
-
-  /**
-   * Used to register a crafting recipe to the server.
-   *
-   * @param recipe The crafting recipe to register.
-   *
-   * @see CraftingRecipe
-   */
-  @Override
-  public void registerCrafting(@NotNull CraftingRecipe recipe) {
-    if(recipe.isShaped()) {
-      final ShapedRecipe shaped = new ShapedRecipe(denominationToStack(recipe.getResult()).locale());
-      shaped.shape(recipe.getRows());
-
-      for(Map.Entry<Character, String> ingredient : recipe.getIngredients().entrySet()) {
-        shaped.setIngredient(ingredient.getKey(), Material.valueOf(ingredient.getValue()));
-      }
-      Bukkit.getServer().addRecipe(shaped);
-    } else {
-      final ShapelessRecipe shapeless = new ShapelessRecipe(denominationToStack(recipe.getResult()).locale());
-      for(Map.Entry<Character, String> ingredient : recipe.getIngredients().entrySet()) {
-        shapeless.addIngredient(1, Material.valueOf(ingredient.getValue()));
-      }
-      Bukkit.getServer().addRecipe(shapeless);
-    }
-  }
-
-  @Override
-  public BukkitItemStack denominationToStack(ItemDenomination denomination) {
-    return new BukkitItemStack().of(denomination.getMaterial(), 1)
-            .enchant(denomination.getEnchantments())
-            .lore(denomination.getLore())
-            .flags(denomination.getFlags())
-            .damage(denomination.getDamage())
-            .display(denomination.getName())
-            .modelData(denomination.getCustomModel());
-  }
-
-  @Override
-  public BukkitCalculationsProvider calculations() {
-    return calc;
-  }
-
-  @Override
-  public PaperItemCalculations itemCalculations() {
-    return new PaperItemCalculations();
   }
 }

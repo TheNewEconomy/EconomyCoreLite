@@ -128,18 +128,38 @@ public abstract class TreasuryAccount implements Account {
   }
 
   public String typeToTNE(final EconomyTransactionType type) {
-    return switch(type) {
-      case SET -> "set";
-      case WITHDRAWAL -> "take";
-      default -> "give";
+
+    String t = "give";
+
+
+    switch(type) {
+      case SET:
+        t = "set";
+        break;
+      case WITHDRAWAL:
+        t = "take";
+        break;
+      default:
+        t = "give";
     };
+
+    return t;
   }
 
   public HoldingsOperation typeToTNEOperation(final EconomyTransactionType type) {
-    return switch(type) {
-      case SET -> HoldingsOperation.SET;
-      case WITHDRAWAL -> HoldingsOperation.SUBTRACT;
-      default -> HoldingsOperation.ADD;
-    };
+
+    HoldingsOperation operation = null;
+    switch(type) {
+      case SET:
+        operation = HoldingsOperation.SET;
+        break;
+      case WITHDRAWAL:
+        operation = HoldingsOperation.SUBTRACT;
+        break;
+      default:
+        operation = HoldingsOperation.ADD;
+    }
+
+    return operation;
   }
 }

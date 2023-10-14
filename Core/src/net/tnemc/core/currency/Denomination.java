@@ -18,8 +18,6 @@ package net.tnemc.core.currency;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import net.tnemc.core.currency.item.ItemDenomination;
-
 import java.math.BigDecimal;
 
 /**
@@ -40,7 +38,7 @@ public class Denomination {
   }
 
   public boolean isItem() {
-    return (this instanceof ItemDenomination);
+    return false;
   }
 
   public void setSingle(String single) {

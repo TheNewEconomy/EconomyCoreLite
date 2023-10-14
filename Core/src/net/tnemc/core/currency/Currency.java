@@ -74,9 +74,6 @@ public class Currency {
   private int decimalPlaces;
   private int minorWeight;
 
-  //MISC configurations
-  private Note note;
-
   public Currency() {
     this.startingHoldings = BigDecimal.ZERO;
     this.maxBalance = CurrencyManager.largestSupported;
@@ -96,14 +93,6 @@ public class Currency {
 
   public Denomination getDenominationByWeight(final BigDecimal weight) {
     return denominations.get(weight);
-  }
-
-  public boolean isNotable() {
-    return note != null;
-  }
-
-  public Optional<Note> getNote() {
-    return Optional.ofNullable(note);
   }
 
   public CurrencyType type() {
@@ -272,10 +261,6 @@ public class Currency {
 
   public void setMinorWeight(int minorWeight) {
     this.minorWeight = minorWeight;
-  }
-
-  public void setNote(Note note) {
-    this.note = note;
   }
 
   public TreeMap<BigDecimal, Denomination> getDenominations() {

@@ -25,7 +25,6 @@ import net.tnemc.core.compatibility.Location;
 import net.tnemc.core.compatibility.PlayerProvider;
 import net.tnemc.core.io.message.MessageData;
 import net.tnemc.core.io.message.MessageHandler;
-import net.tnemc.menu.bukkit.BukkitPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -38,12 +37,11 @@ import java.util.UUID;
  * @author creatorfromhell
  * @since 0.1.2.0
  */
-public class BukkitPlayerProvider extends BukkitPlayer implements PlayerProvider {
+public class BukkitPlayerProvider implements PlayerProvider {
 
   private final OfflinePlayer player;
 
   public BukkitPlayerProvider(OfflinePlayer player) {
-    super(player, TNE.instance());
     this.player = player;
   }
 
@@ -164,11 +162,6 @@ public class BukkitPlayerProvider extends BukkitPlayer implements PlayerProvider
     if(player.getPlayer() != null) {
       player.getPlayer().setLevel(level);
     }
-  }
-
-  @Override
-  public BukkitInventoryProvider inventory() {
-    return new BukkitInventoryProvider(identifier(), TNE.instance());
   }
 
   /**

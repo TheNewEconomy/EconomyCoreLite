@@ -19,13 +19,8 @@ package net.tnemc.core.compatibility;
  */
 
 import net.tnemc.core.TNECore;
-import net.tnemc.core.compatibility.helper.CraftingRecipe;
 import net.tnemc.core.compatibility.scheduler.SchedulerProvider;
-import net.tnemc.core.currency.calculations.ItemCalculations;
-import net.tnemc.core.currency.item.ItemDenomination;
 import net.tnemc.core.region.RegionMode;
-import net.tnemc.item.AbstractItemStack;
-import net.tnemc.item.providers.CalculationsProvider;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.commands.command.CommandActor;
 
@@ -188,13 +183,6 @@ public interface ServerConnector {
   String replaceColours(final String string);
 
   /**
-   * Provides direct access to the implementation's instance of TNIL's AbstractItemStack, which acts
-   * as a builder.
-   * @return The software's implementation of {@link AbstractItemStack}.
-   */
-  AbstractItemStack<?> stackBuilder();
-
-  /**
    * Used to save a resource from the plugin's jar file to the local system's storage.
    * @param path The path to the resource inside the jar.
    * @param replace If the file exists in the local system's storage, should it be replaced?
@@ -206,19 +194,6 @@ public interface ServerConnector {
    * @return The scheduler for this implementation.
    */
   SchedulerProvider<?> scheduler();
-
-  /**
-   * Used to register a crafting recipe to the server.
-   * @param recipe The crafting recipe to register.
-   * @see CraftingRecipe
-   */
-  void registerCrafting(@NotNull final CraftingRecipe recipe);
-
-  <S, T extends AbstractItemStack<S>, INV> CalculationsProvider<T, S, INV> calculations();
-
-  <S> AbstractItemStack<S> denominationToStack(final ItemDenomination denomination);
-
-  <INV> ItemCalculations<INV> itemCalculations();
 
 
 }

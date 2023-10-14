@@ -31,9 +31,7 @@ import net.tnemc.core.compatibility.CmdSource;
 import net.tnemc.core.compatibility.PlayerProvider;
 import net.tnemc.core.config.MainConfig;
 import net.tnemc.core.currency.Currency;
-import net.tnemc.core.currency.Note;
 import net.tnemc.core.currency.format.CurrencyFormatter;
-import net.tnemc.core.currency.type.MixedType;
 import net.tnemc.core.io.message.MessageData;
 import net.tnemc.core.manager.TopManager;
 import net.tnemc.core.manager.top.TopPage;
@@ -41,14 +39,9 @@ import net.tnemc.core.transaction.Receipt;
 import net.tnemc.core.transaction.Transaction;
 import net.tnemc.core.transaction.TransactionResult;
 import net.tnemc.core.utils.exceptions.InvalidTransactionException;
-import net.tnemc.item.AbstractItemStack;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -59,13 +52,6 @@ import java.util.Optional;
  * @since 0.1.2.0
  */
 public class MoneyCommand extends BaseCommand {
-
-  //ArgumentsParser: [currency]
-  public static void onMyBal(CmdSource<?> sender, Currency currency) {
-    if(sender.player().isPresent()) {
-      sender.player().get().inventory().openMenu(sender.player().get(), "my_bal");
-    }
-  }
 
   //ArgumentsParser: [currency] [world]
   public static void onBalance(CmdSource<?> sender, Currency currency, String region) {
@@ -162,61 +148,6 @@ public class MoneyCommand extends BaseCommand {
     }
   }
 
-  //ArgumentsParser: <amount> [currency]
-  public static void onDeposit(CmdSource<?> sender, PercentBigDecimal amount, Currency currency, String region) {
-
-    final Optional<PlayerProvider> player = sender.player();
-    if(EconomyManager.limitCurrency() && player.isPresent()) {
-      if(!player.get().hasPermission("tne.money.deposit." + currency.getIdentifier())) {
-        final MessageData data = new MessageData("Messages.Account.BlockedAction");
-        data.addReplacement("$action", "deposit");
-        data.addReplacement("$currency", currency.getDisplay());
-        return;
-      }
-    }
-
-    if(amount.value().compareTo(BigDecimal.ZERO) < 0) {
-      sender.message(new MessageData("Messages.Money.Negative"));
-      return;
-    }
-
-    final Optional<Account> senderAccount = sender.account();
-
-    if(senderAccount.isEmpty()) {
-      final MessageData data = new MessageData("Messages.General.NoPlayer");
-      data.addReplacement("$player", sender.name());
-      sender.message(data);
-      return;
-    }
-
-    region = TNECore.eco().region().resolve(region);
-
-    if(!(currency.type() instanceof MixedType)) {
-      sender.message(new MessageData("Messages.Money.NotMixed"));
-      return;
-    }
-
-    final HoldingsModifier modifier = new HoldingsModifier(sender.region(),
-            currency.getUid(),
-            amount,
-            EconomyManager.VIRTUAL
-    );
-
-    final Transaction transaction = new Transaction("deposit")
-            .to(senderAccount.get(), modifier)
-            .from(senderAccount.get(), modifier.counter(EconomyManager.ITEM_ONLY))
-            .processor(EconomyManager.baseProcessor())
-            .source(new PlayerSource(sender.identifier()));
-
-    final Optional<Receipt> receipt = processTransaction(sender, transaction);
-    if(receipt.isPresent()) {
-      final MessageData data = new MessageData("Messages.Money.Deposit");
-      data.addReplacement("$amount", CurrencyFormatter.format(senderAccount.get(),
-              modifier.asEntry()));
-      sender.message(data);
-    }
-  }
-
   //ArgumentsParser: <player> <amount> [world] [currency]
   public static void onGive(CmdSource<?> sender, Account account, PercentBigDecimal amount, String region, Currency currency) {
 
@@ -266,63 +197,6 @@ public class MoneyCommand extends BaseCommand {
     }
   }
 
-  //ArgumentsParser: <amount> [currency]
-  public static void onNote(CmdSource<?> sender, PercentBigDecimal amount, Currency currency) {
-
-    final Optional<Account> account = sender.account();
-    final Optional<Note> note = currency.getNote();
-    if(account.isPresent() && note.isPresent() && account.get() instanceof PlayerAccount) {
-
-      final Optional<PlayerProvider> provider = ((PlayerAccount)account.get()).getPlayer();
-      if(provider.isEmpty()) {
-        return;
-      }
-
-      if(EconomyManager.limitCurrency() && !provider.get().hasPermission("tne.money.note." + currency.getIdentifier())) {
-        final MessageData data = new MessageData("Messages.Account.BlockedAction");
-        data.addReplacement("$action", "note");
-        data.addReplacement("$currency", currency.getDisplay());
-        return;
-      }
-
-      if(amount.value().compareTo(note.get().getMinimum()) < 0) {
-        final MessageData min = new MessageData("Messages.Note.Minimum");
-        min.addReplacement("$amount", note.get().getMinimum().toPlainString());
-        sender.message(min);
-        return;
-      }
-
-      final BigDecimal rounded = amount.value().setScale(currency.getDecimalPlaces(), RoundingMode.DOWN);
-
-      final BigDecimal amt = rounded.add(note.get().getFee().calculateTax(rounded)).setScale(currency.getDecimalPlaces(), RoundingMode.DOWN);
-
-      final HoldingsModifier modifier = new HoldingsModifier(sender.region(),
-                                                             currency.getUid(),
-              amt
-      );
-
-      final Transaction transaction = new Transaction("note")
-          .from(account.get(), modifier.counter())
-          .processor(EconomyManager.baseProcessor())
-          .source(new PlayerSource(sender.identifier()));
-
-
-      final Optional<Receipt> receipt = processTransaction(sender, transaction);
-      if(receipt.isPresent()) {
-        final Collection<AbstractItemStack<Object>> left = TNECore.server().calculations().giveItems(Collections.singletonList(note.get().stack(currency.getIdentifier(), sender.region(), rounded)), provider.get().inventory().getInventory(false));
-
-        if(left.size() > 0) {
-          TNECore.server().calculations().drop(left, ((PlayerAccount)account.get()).getUUID());
-        }
-
-        final MessageData entryMSG = new MessageData("Messages.Note.Given");
-        entryMSG.addReplacement("$currency",currency.getIdentifier());
-        entryMSG.addReplacement("$amount", CurrencyFormatter.format(account.get(), modifier.asEntry()));
-        sender.message(entryMSG);
-      }
-    }
-  }
-
   //ArgumentsParser: <player> [world] [currency]
   public static void onOther(CmdSource<?> sender, Account account, String region, Currency currency) {
 
@@ -351,14 +225,6 @@ public class MoneyCommand extends BaseCommand {
       BigDecimal amount = BigDecimal.ZERO;
       for(HoldingsEntry entry : currency.type().getHoldings(account, resolve, currency, EconomyManager.NORMAL)) {
         amount = amount.add(entry.getAmount());
-
-        if(entry.getHandler().asID().equalsIgnoreCase(EconomyManager.INVENTORY_ONLY.asID())) {
-          entryMSG.addReplacement("$inventory", CurrencyFormatter.format(account, entry));
-        }
-
-        if(entry.getHandler().asID().equalsIgnoreCase(EconomyManager.E_CHEST.asID())) {
-          entryMSG.addReplacement("$ender", CurrencyFormatter.format(account, entry));
-        }
 
         if(entry.getHandler().asID().equalsIgnoreCase(EconomyManager.VIRTUAL.asID())) {
           entryMSG.addReplacement("$virtual", CurrencyFormatter.format(account, entry));
@@ -685,62 +551,6 @@ public class MoneyCommand extends BaseCommand {
         en.addReplacement("$amount", CurrencyFormatter.format(senderAccount.get(), new HoldingsEntry(TNECore.eco().region().defaultRegion(), currency.getUid(), entry.getValue(), EconomyManager.NORMAL)));
         sender.message(en);
       }
-    }
-  }
-
-  //ArgumentsParser: <amount> [currency]
-  public static void onWithdraw(CmdSource<?> sender, PercentBigDecimal amount, Currency currency, String region) {
-
-    final Optional<PlayerProvider> player = sender.player();
-    if(EconomyManager.limitCurrency() && player.isPresent()) {
-      if(!player.get().hasPermission("tne.money.withdraw." + currency.getIdentifier())) {
-        final MessageData data = new MessageData("Messages.Account.BlockedAction");
-        data.addReplacement("$action", "withdraw funds");
-        data.addReplacement("$currency", currency.getDisplay());
-        return;
-      }
-    }
-
-    if(amount.value().compareTo(BigDecimal.ZERO) < 0) {
-      sender.message(new MessageData("Messages.Money.Negative"));
-      return;
-    }
-
-    final Optional<Account> senderAccount = sender.account();
-    if(senderAccount.isEmpty()) {
-      final MessageData data = new MessageData("Messages.General.NoPlayer");
-      data.addReplacement("$player", sender.name());
-      sender.message(data);
-      return;
-    }
-
-    region = TNECore.eco().region().resolve(region);
-
-    if(!(currency.type() instanceof MixedType)) {
-      sender.message(new MessageData("Messages.Money.NotMixed"));
-      return;
-    }
-
-    final HoldingsModifier modifier = new HoldingsModifier(sender.region(),
-            currency.getUid(),
-            amount,
-            EconomyManager.ITEM_ONLY
-    );
-
-    final Transaction transaction = new Transaction("withdraw")
-            .to(senderAccount.get(), modifier)
-            .from(senderAccount.get(), modifier.counter(EconomyManager.VIRTUAL))
-            .processor(EconomyManager.baseProcessor())
-            .source(new PlayerSource(sender.identifier()));
-
-    final Optional<Receipt> receipt = processTransaction(sender, transaction);
-    if(receipt.isPresent()) {
-
-      final MessageData data = new MessageData("Messages.Money.Withdrawn");
-      data.addReplacement("$currency", currency.getIdentifier());
-      data.addReplacement("$amount", CurrencyFormatter.format(senderAccount.get(),
-              modifier.asEntry()));
-      sender.message(data);
     }
   }
 

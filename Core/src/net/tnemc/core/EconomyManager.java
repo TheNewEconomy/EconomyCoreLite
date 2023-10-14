@@ -20,9 +20,7 @@ package net.tnemc.core;
 
 import net.tnemc.core.account.Account;
 import net.tnemc.core.account.holdings.HoldingsHandler;
-import net.tnemc.core.account.holdings.handlers.EnderChestHandler;
 import net.tnemc.core.account.holdings.handlers.ExperienceHandler;
-import net.tnemc.core.account.holdings.handlers.InventoryHandler;
 import net.tnemc.core.account.holdings.handlers.VirtualHandler;
 import net.tnemc.core.config.MainConfig;
 import net.tnemc.core.currency.CurrencyType;
@@ -61,10 +59,6 @@ public class EconomyManager {
 
   public static final Identifier VIRTUAL = new Identifier("tne", "VIRTUAL_HOLDINGS");
   public static final Identifier EXPERIENCE = new Identifier("tne", "EXPERIENCE_HOLDINGS");
-  public static final Identifier ITEM_ONLY = new Identifier("tne", "ITEM_ONLY");
-
-  public static final Identifier INVENTORY_ONLY = new Identifier("tne", "INVENTORY_HOLDINGS");
-  public static final Identifier E_CHEST = new Identifier("tne", "ENDER_HOLDINGS");
 
   private final LinkedHashMap<String, HoldingsHandler> handlers = new LinkedHashMap<>();
 
@@ -105,15 +99,10 @@ public class EconomyManager {
     addIdentifier(DATABASE);
     addIdentifier(VIRTUAL);
     addIdentifier(EXPERIENCE);
-    addIdentifier(ITEM_ONLY);
-    addIdentifier(INVENTORY_ONLY);
-    addIdentifier(E_CHEST);
 
     //Add our core handlers
     addHandler(new VirtualHandler());
     addHandler(new ExperienceHandler());
-    addHandler(new InventoryHandler());
-    addHandler(new EnderChestHandler());
   }
 
   public Optional<Identifier> findID(String id) {

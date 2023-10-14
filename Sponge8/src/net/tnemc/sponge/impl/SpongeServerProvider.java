@@ -23,14 +23,9 @@ import net.tnemc.core.compatibility.LogProvider;
 import net.tnemc.core.compatibility.PlayerProvider;
 import net.tnemc.core.compatibility.ProxyProvider;
 import net.tnemc.core.compatibility.ServerConnector;
-import net.tnemc.core.compatibility.helper.CraftingRecipe;
 import net.tnemc.core.compatibility.scheduler.SchedulerProvider;
-import net.tnemc.core.currency.item.ItemDenomination;
 import net.tnemc.core.region.RegionMode;
-import net.tnemc.item.AbstractItemStack;
 import net.tnemc.sponge.SpongeCore;
-import net.tnemc.sponge.SpongeItemCalculationsProvider;
-import net.tnemc.sponge.SpongeItemStack;
 import net.tnemc.sponge.impl.scheduler.SpongeScheduler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,8 +54,6 @@ import java.util.logging.Level;
  * @since 0.1.2.0
  */
 public class SpongeServerProvider implements ServerConnector {
-
-  private final SpongeItemCalculationsProvider calc = new SpongeItemCalculationsProvider();
   private final SpongeProxyProvider proxy = new SpongeProxyProvider();
 
   private final SpongeScheduler scheduler;
@@ -219,11 +212,6 @@ public class SpongeServerProvider implements ServerConnector {
   }
 
   @Override
-  public AbstractItemStack<?> stackBuilder() {
-    return new SpongeItemStack();
-  }
-
-  @Override
   public void saveResource(String resourcePath, boolean replace) {
     if (resourcePath != null && !resourcePath.equals("")) {
       resourcePath = resourcePath.replace('\\', '/');
@@ -274,39 +262,6 @@ public class SpongeServerProvider implements ServerConnector {
   @Override
   public SpongeScheduler scheduler() {
     return scheduler;
-  }
-
-  /**
-   * Used to register a crafting recipe to the server.
-   *
-   * @param recipe The crafting recipe to register.
-   *
-   * @see CraftingRecipe
-   */
-  @Override
-  public void registerCrafting(@NotNull CraftingRecipe recipe) {
-    //TODO: Sponge Register crafting
-  }
-
-  @Override
-  public SpongeItemCalculationsProvider calculations() {
-    return calc;
-  }
-
-  @Override
-  public SpongeItemStack denominationToStack(ItemDenomination denomination) {
-    return new SpongeItemStack().of(denomination.getMaterial(), 1)
-            .enchant(denomination.getEnchantments())
-            .lore(denomination.getLore())
-            .flags(denomination.getFlags())
-            .damage(denomination.getDamage())
-            .display(denomination.getName())
-            .modelData(denomination.getCustomModel());
-  }
-
-  @Override
-  public SpongeItemCalculations itemCalculations() {
-    return new SpongeItemCalculations();
   }
 
   public @Nullable InputStream getResource(@NotNull String filename) {

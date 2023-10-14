@@ -67,8 +67,12 @@ public class StorageManager {
 
       sync = DataConfig.yaml().getString("Data.Sync.Type", "Bungee");
       switch(sync.toLowerCase()) {
-        case "redis", "jedis" -> this.jedisManager = new TNEJedisManager();
-        default -> this.jedisManager = null;
+        case "redis":
+        case "jedis":
+          this.jedisManager = new TNEJedisManager();
+          break;
+        default:
+          this.jedisManager = null;
       }
     } else {
       sync = "Bungee";
@@ -79,7 +83,7 @@ public class StorageManager {
     TNECore.log().debug("Engine: " + engine.toLowerCase(), DebugLevel.STANDARD);
 
     switch(engine.toLowerCase()) {
-      case "mysql" -> {
+      case "mysql": {
 
         boolean maria = false;
 
@@ -102,25 +106,30 @@ public class StorageManager {
         }
         this.engine = new MySQL();
         this.connector = new SQLConnector();
+        break;
       }
-      case "maria", "mariadb" -> {
+      case "maria":
+      case "mariadb": {
 
         final String prefix = DataConfig.yaml().getString("Data.Database.Prefix");
         this.engine = new MySQL(prefix, new MariaDialect(prefix));
         this.connector = new SQLConnector();
+        break;
       }
-      case "maria-outdated" -> {
+      case "maria-outdated": {
 
         TNECore.log().warning("Using outdated database! Please note: Official Support for this version of TNE is limited.", DebugLevel.OFF);
         final String prefix = DataConfig.yaml().getString("Data.Database.Prefix");
         this.engine = new MySQL(prefix, new MariaOutdatedDialect(prefix));
         this.connector = new SQLConnector();
+        break;
       }
-      case "postgre" -> {
+      case "postgre": {
         this.engine = new PostgreSQL();
         this.connector = new SQLConnector();
+        break;
       }
-      default -> {
+      default: {
         this.engine = new YAML();
         this.connector = new YAMLConnector();
       }
@@ -131,12 +140,15 @@ public class StorageManager {
 
   public void sendMessage(final String channel, final byte[] data) {
     switch(sync.toLowerCase()) {
-      case "redis", "jedis" -> {
+      case "redis":
+      case "jedis": {
         if(jedisManager != null) {
           jedisManager.publish(channel, data);
+          break;
         }
       }
-      default -> TNECore.server().proxy().send(channel, data);
+      default:
+        TNECore.server().proxy().send(channel, data);
     }
   }
 

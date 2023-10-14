@@ -29,7 +29,13 @@ import org.apache.logging.log4j.Logger;
  * @author creatorfromhell
  * @since 0.1.2.0
  */
-public record SpongeLogProvider(Logger logger) implements LogProvider {
+public class SpongeLogProvider implements LogProvider {
+
+  private final Logger logger;
+
+  public SpongeLogProvider(Logger logger) {
+    this.logger = logger;
+  }
 
   /**
    * Sends an informative message, which doesn't contain an error or debug message.
@@ -99,5 +105,9 @@ public record SpongeLogProvider(Logger logger) implements LogProvider {
       }
       logger.error("====== Please report this to someone ======");
     }
+  }
+
+  public Logger logger() {
+    return logger;
   }
 }

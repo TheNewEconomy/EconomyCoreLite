@@ -21,7 +21,6 @@ package net.tnemc.sponge.impl;
 import net.tnemc.core.TNECore;
 import net.tnemc.core.compatibility.PlayerProvider;
 import net.tnemc.core.io.message.MessageData;
-import net.tnemc.menu.sponge8.SpongePlayer;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
@@ -30,6 +29,7 @@ import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.plugin.PluginContainer;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * The Sponge implementation of the {@link PlayerProvider}.
@@ -37,9 +37,19 @@ import java.util.Optional;
  * @author creatorfromhell
  * @since 0.1.2.0
  */
-public class SpongePlayerProvider extends SpongePlayer implements PlayerProvider {
+public class SpongePlayerProvider implements PlayerProvider {
+
+  private final User user;
+  private final PluginContainer container;
+
   public SpongePlayerProvider(User user, PluginContainer container) {
-    super(user, container);
+    this.user = user;
+    this.container = container;
+  }
+
+  @Override
+  public UUID identifier() {
+    return user.uniqueId();
   }
 
   /**
@@ -153,9 +163,16 @@ public class SpongePlayerProvider extends SpongePlayer implements PlayerProvider
     }
   }
 
+  /**
+   * Used to determine if this player has the specified permission node.
+   *
+   * @param permission The node to check for.
+   *
+   * @return True if the player has the permission, otherwise false.
+   */
   @Override
-  public SpongeInventoryProvider inventory() {
-    return new SpongeInventoryProvider(identifier(), container);
+  public boolean hasPermission(String permission) {
+    return user.hasPermission(permission);
   }
 
   @Override

@@ -36,6 +36,6 @@ public class RegionSuggestion implements SuggestionProvider {
 
   @Override
   public @NotNull Collection<String> getSuggestions(@NotNull List<String> list, @NotNull CommandActor commandActor, @NotNull ExecutableCommand executableCommand) throws Throwable {
-    return TNECore.eco().region().getRegions().keySet().stream().toList();
+    return List.of((String[])TNECore.eco().region().getRegions().keySet().stream().toArray());
   }
 }

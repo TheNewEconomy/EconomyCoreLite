@@ -39,8 +39,6 @@ public class EntityKilledListener implements Listener {
     //We don't care about players
     if(!(event.getEntity() instanceof Player)) {
 
-      event.getDrops().removeIf(stack->new EntityDropItemHandler().handle(stack.getType().getKey().getKey()).isCancelled());
-
       //Remove exp from entity drop if handler is false.
       if(new EntityDropExpHandler().handle().isCancelled()) {
         event.setDroppedExp(0);

@@ -23,5 +23,21 @@ package net.tnemc.bungee.message.backlog;
  * @author creatorfromhell
  * @since 0.1.2.0
  */
-public record BacklogEntry(String channel, byte[] out) {
+public class BacklogEntry {
+
+  private final String channel;
+  private final byte[] out;
+
+  public BacklogEntry(String channel, byte[] out) {
+    this.channel = channel;
+    this.out = out;
+  }
+
+  public String channel() {
+    return channel;
+  }
+
+  public byte[] out() {
+    return out;
+  }
 }

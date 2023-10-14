@@ -23,15 +23,11 @@ import net.tnemc.core.currency.Currency;
 import net.tnemc.core.currency.CurrencyRegion;
 import net.tnemc.core.currency.CurrencySaver;
 import net.tnemc.core.currency.Denomination;
-import net.tnemc.core.currency.Note;
-import net.tnemc.core.currency.item.ItemCurrency;
-import net.tnemc.core.currency.item.ItemDenomination;
 import org.simpleyaml.configuration.file.YamlFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * DefaultCurrencySaver
@@ -128,24 +124,6 @@ public class DefaultCurrencySaver implements CurrencySaver {
       }
     }
 
-    //Load our item-back currency configurations.
-    if(currency instanceof ItemCurrency) {
-      cur.set("Item.EnderChest", ((ItemCurrency)currency).canEnderChest());
-    }
-
-    //Load our note configurations.
-    final Optional<Note> note = currency.getNote();
-    if(note.isPresent()) {
-
-      cur.set("Note.Fee", note.get().getFee().asString());
-      cur.set("Note.Minimum", note.get().getMinimum().toPlainString());
-      cur.set("Note.Item.Material", note.get().getMaterial());
-      cur.set("Note.Item.Texture", note.get().getTexture());
-      cur.set("Note.Item.ModelData", note.get().getCustomModelData());
-      cur.set("Note.Item.Item.Enchantments", note.get().getEnchantments());
-      cur.set("Note.Item.Item.Flags", note.get().getFlags());
-    }
-
     try {
       cur.save();
     } catch(IOException e) {
@@ -209,33 +187,6 @@ public class DefaultCurrencySaver implements CurrencySaver {
     denom.set("Info.Plural", denomination.plural());
 
     denom.set("Options.Weight", denomination.weight());
-
-    if(denomination instanceof ItemDenomination) {
-
-      denom.set("Options.Material", ((ItemDenomination)denomination).getMaterial());
-
-      if(((ItemDenomination)denomination).getName() != null) {
-        denom.set("Options.Name", ((ItemDenomination)denomination).getName());
-      }
-
-      if(((ItemDenomination)denomination).getLore().size() > 0) {
-        denom.set("Options.Lore", ((ItemDenomination)denomination).getLore());
-      }
-
-      denom.set("Options.ModelData", ((ItemDenomination)denomination).getCustomModel());
-
-      if(((ItemDenomination)denomination).getTexture() != null) {
-        denom.set("Options.Texture", ((ItemDenomination)denomination).getTexture());
-      }
-
-      if(((ItemDenomination)denomination).getEnchantments().size() > 0) {
-        denom.set("Options.Enchantments", ((ItemDenomination)denomination).getEnchantments());
-      }
-
-      if(((ItemDenomination)denomination).getFlags().size() > 0) {
-        denom.set("Options.Flags", ((ItemDenomination)denomination).getFlags());
-      }
-    }
 
     try {
       denom.save();

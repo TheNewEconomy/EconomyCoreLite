@@ -19,9 +19,9 @@ package net.tnemc.core.compatibility;
  */
 
 import net.tnemc.core.io.message.MessageData;
-import net.tnemc.menu.core.compatibility.MenuPlayer;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * A class that acts as a bridge between various player objects on different server software providers.
@@ -29,7 +29,9 @@ import java.util.Optional;
  * @since 0.1.2.0
  * @author creatorfromhell
  */
-public interface PlayerProvider extends MenuPlayer {
+public interface PlayerProvider {
+
+  UUID identifier();
 
   /**
    * Used to get the name of this player.
@@ -85,8 +87,6 @@ public interface PlayerProvider extends MenuPlayer {
    */
   void setExpLevel(int level);
 
-  InventoryProvider<?> inventory();
-
   /**
    * Used to determine if this player has the specified permission node.
    *
@@ -100,4 +100,10 @@ public interface PlayerProvider extends MenuPlayer {
    * @param messageData The message data to utilize for this translation.
    */
   void message(final MessageData messageData);
+
+  /**
+   * Used to send a message to this command source.
+   * @param message The message to utilize for this translation.
+   */
+  void message(String message);
 }

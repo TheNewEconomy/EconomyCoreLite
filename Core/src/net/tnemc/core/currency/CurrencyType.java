@@ -23,7 +23,6 @@ import net.tnemc.core.TNECore;
 import net.tnemc.core.account.Account;
 import net.tnemc.core.account.holdings.HoldingsEntry;
 import net.tnemc.core.account.holdings.HoldingsHandler;
-import net.tnemc.core.currency.type.ItemType;
 import net.tnemc.core.utils.Identifier;
 
 import java.math.BigDecimal;
@@ -79,7 +78,7 @@ public interface CurrencyType {
    * @return True if this currency type is based on physical items.
    */
   default boolean supportsItems() {
-    return (this instanceof ItemType);
+    return false;
   }
 
   /**
@@ -115,11 +114,6 @@ public interface CurrencyType {
     if(type.equals(EconomyManager.NORMAL)) {
 
       handlers.addAll(EconomyManager.instance().getFor(account, this));
-
-    } else if(type.equals(EconomyManager.ITEM_ONLY)) {
-
-      final Optional<CurrencyType> curType = EconomyManager.instance().currency().findType("item");
-      curType.ifPresent(currencyType -> handlers.addAll(EconomyManager.instance().getFor(account, currencyType)));
 
     } else {
 
